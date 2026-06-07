@@ -8,8 +8,8 @@
         /* 文學風配色與字體 */
         body {
             font-family: "Kaiti TC", "Kaiti SC", "TW-Sung", "PMingLiU", "MingLiU", serif;
-            background-color: #f0ebe1; /* 宣紙底色 */
-            color: #3a3632; /* 墨黑色 */
+            background-color: #f0ebe1;
+            color: #3a3632;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -53,7 +53,7 @@
         .btn-primary { background: #7a4b3a; color: #fcfbf9; border: none; font-size: 20px; }
         .btn-primary:hover:not(:disabled) { background: #5c3628; }
         
-        /* 答題狀態顏色：雅致的綠與紅 */
+        /* 答題狀態顏色 */
         .correct { background: #5c7a53 !important; color: white !important; border-color: #5c7a53 !important; }
         .wrong { background: #9e4747 !important; color: white !important; border-color: #9e4747 !important; }
         
@@ -92,6 +92,18 @@
             font-size: 16px;
             margin-bottom: 15px;
         }
+        
+        /* 小提示框樣式 */
+        .hint-box {
+            background: #fdf8e4;
+            border-left: 4px solid #d4c9b3;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4a3b32;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +129,10 @@
         </div>
         <div class="question-text" id="question-text">題目載入中...</div>
         <div id="options-container"></div>
+        
+        <!-- 提示與下一題 -->
+        <div id="hint-container" class="hint-box hidden"></div>
+        <button id="next-btn" class="btn-primary hidden" style="margin-top: 15px;" onclick="nextQuestion()">下一題</button>
     </div>
 
     <!-- 結果介面 -->
@@ -131,23 +147,23 @@
 </div>
 
 <script>
-    // 1. 題目資料 (加入 keyword 屬性)
+    // 1. 題目資料 (更新了選項與加入 hint)
     const questions = [
-        { q: "1）使人遺趙王書\n「遺」的意思是？", keyword: "遺", options: ["遺留 / 留下", "遺失 / 丟失", "派遣", "送給"], ans: 3 },
-        { q: "2）均之二策，寧許以負秦曲\n「均」的意思是？", keyword: "均", options: ["平均 / 平分", "全部 / 皆", "衡量", "相同"], ans: 2 },
-        { q: "3）相如奉璧奏秦王\n「奏」的意思是？", keyword: "奏", options: ["彈奏", "稟告 / 上奏", "獻上", "敲擊"], ans: 2 },
-        { q: "4）秦王飲酒酣\n「酣」的意思是？", keyword: "酣", options: ["喝醉", "盡興", "痛飲", "睡覺"], ans: 1 },
-        { q: "5）寶馬雕車香滿路\n「寶馬」的意思是？", keyword: "寶馬", options: ["滿載寶物的馬車", "裝飾華麗的馬", "名貴的駿馬", "跑得快的馬"], ans: 2 },
-        { q: "6）驀然回首\n「驀然」的意思是？", keyword: "驀然", options: ["傍晚時分", "突然 / 忽然", "傷心地", "不經意地"], ans: 3 },
-        { q: "7）吾為其無用而掊之\n「掊」的意思是？", keyword: "掊", options: ["掩埋", "拋棄", "剖開", "擊破"], ans: 3 },
-        { q: "8）其堅不能自舉也\n「舉」的意思是？", keyword: "舉", options: ["舉起", "承受", "飛起", "支撐"], ans: 1 },
-        { q: "9）今一朝而鬻百金\n「鬻」的意思是？", keyword: "鬻", options: ["賺取", "買入", "出售", "獲得"], ans: 2 },
-        { q: "10）以候敖者\n「敖」的意思是？", keyword: "敖", options: ["驕傲的人", "熬夜的人", "諸侯", "出遊"], ans: 3 },
-        { q: "11）其隙也，則施施而行\n「隙」的意思是？", keyword: "隙", options: ["縫隙", "裂痕", "空間", "空閒時間"], ans: 3 },
-        { q: "12）緣染溪\n「緣」的意思是？", keyword: "緣", options: ["緣分", "攀緣", "因為", "沿著"], ans: 3 },
-        { q: "13）到則披草而坐\n「披」的意思是？", keyword: "披", options: ["披上 / 穿上", "劈開", "鋪開", "撥開"], ans: 3 },
-        { q: "14）悠悠乎與顥氣俱\n「悠悠」的意思是？", keyword: "悠悠", options: ["悠閒自在", "歷史悠久", "慢慢地", "遼闊無窮"], ans: 3 },
-        { q: "15）引觴滿酌\n「引」的意思是？", keyword: "引", options: ["吸引", "帶領", "飲用", "拿起"], ans: 3 }
+        { q: "1）使人遺趙王書\n「遺」的意思是？", keyword: "遺", options: ["遺留 / 留下", "遺失 / 丟失", "派遣", "給予、送"], ans: 3, hint: "💡 小提示：「遺」讀作 wai6（魏）時是留下，但讀作 wai2（偉）時，古義是「給予、送」。可以聯想詞語「餽贈」（餽遺），就是送給別人的意思。" },
+        { q: "2）均之二策，寧許以負秦曲\n「均」的意思是？", keyword: "均", options: ["平均 / 平分", "全部 / 皆", "衡量", "相同"], ans: 2, hint: "💡 小提示：「均」在這裡不是平均，而是放在天平上「衡量」輕重。想像藺相如把兩個計策（二策）放在天平的兩邊「衡量」優劣。" },
+        { q: "3）相如奉璧奏秦王\n「奏」的意思是？", keyword: "奏", options: ["彈奏", "稟告 / 上奏", "獻上", "敲擊"], ans: 2, hint: "💡 小提示：「奏」現代多指彈奏樂器或上奏摺，但在這裡有「進獻、獻上」之意。想像相如雙手捧著玉璧，恭敬地「呈獻」給君王。" },
+        { q: "4）秦王飲酒酣\n「酣」的意思是？", keyword: "酣", options: ["喝醉", "飲酒到高興的時候", "痛飲", "睡覺"], ans: 1, hint: "💡 小提示：「酣」字從「酉」部（與酒有關），根據注釋，這裡確切的意思是「飲酒到高興的時候」，還沒到爛醉的程度。" },
+        { q: "5）寶馬雕車香滿路\n「寶馬」的意思是？", keyword: "寶馬", options: ["滿載寶物的馬車", "裝飾華麗的馬", "名貴的駿馬", "跑得快的馬"], ans: 2, hint: "💡 小提示：「寶」指珍貴、名貴，「馬」就是駿馬。古人眼中的「寶馬」就是「名貴的駿馬」。" },
+        { q: "6）驀然迴首\n「驀然」的意思是？", keyword: "驀然", options: ["傍晚時分", "突然、忽然", "傷心地", "不經意地"], ans: 1, hint: "💡 小提示：根據注釋，「驀然」確切的意思是「突然、忽然」。千萬別寫錯成日字底的「暮」（傍晚）。聯想：走著走著，「突然」回頭一看。" },
+        { q: "7）吾為其無用而掊之\n「掊」的意思是？", keyword: "掊", options: ["掩埋", "拋棄", "剖開", "擊破"], ans: 3, hint: "💡 小提示：「掊」（讀音：剖）部首是手，意思是雙手把東西「擊破」。莊子覺得大葫蘆沒用，就動手把它「擊破」了。" },
+        { q: "8）其堅不能自舉也\n「舉」的意思是？", keyword: "舉", options: ["舉起", "承受", "飛起", "擎、拿起"], ans: 3, hint: "💡 小提示：根據注釋，「舉」是「擎、拿起」的意思。指大葫蘆的質地不夠堅硬，裝滿水後，無法把它「拿起」。" },
+        { q: "9）今一朝而鬻技百金\n「鬻」的意思是？", keyword: "鬻", options: ["賺取", "買入", "賣", "獲得"], ans: 2, hint: "💡 小提示：「鬻」（讀音：育）字下面是「鬲」（古代煮食器具），上面像粥。古人煮粥拿去賣，引申為「賣」。聯想成語「賣兒鬻女」。" },
+        { q: "10）以候敖者\n「敖」的意思是？", keyword: "敖", options: ["驕傲的人", "熬夜的人", "諸侯", "出遊、閒遊"], ans: 3, hint: "💡 小提示：「敖」是「遨」的本字，通「遨」。加上辵部（辶）就是「遨遊」，所以「敖者」就是「出遊、閒遊」的人。" },
+        { q: "11）其隙也，則施施而行，漫漫而遊。\n「隙」的意思是？", keyword: "隙", options: ["縫隙", "裂痕", "空間", "空隙，指閒暇的時間"], ans: 3, hint: "💡 小提示：課文中的「隙」不是指物理上的空間，而是指時間上的空檔，即「空隙，指閒暇的時間」。" },
+        { q: "12）緣染溪\n「緣」的意思是？", keyword: "緣", options: ["緣分", "攀緣", "因為", "沿著、順著"], ans: 3, hint: "💡 小提示：「緣」在這裡讀作 jyun4，和「沿」讀音相近，意思也是「沿著、順著」。聯想「沿（緣）著溪水走」。" },
+        { q: "13）到則披草而坐\n「披」的意思是？", keyword: "披", options: ["披上 / 穿上", "劈開", "鋪開", "用手撥開"], ans: 3, hint: "💡 小提示：「披」平時解作披上衣服，但這裡是手部動作，指「用手撥開」雜草。聯想成語「披荊斬棘」，就是撥開荊棘。" },
+        { q: "14）悠悠乎與顥氣俱\n「悠悠」的意思是？", keyword: "悠悠", options: ["悠閒自在", "歷史悠久", "慢慢地", "遼闊無窮"], ans: 3, hint: "💡 小提示：「悠悠」在現代多指悠閒，但在這裡形容西山的氣象，意思是「飄渺無窮 / 遼闊無窮」。" },
+        { q: "15）引觴滿酌\n「引」的意思是？", keyword: "引", options: ["吸引", "帶領 / 引導", "飲用", "取、拿起"], ans: 3, hint: "💡 小提示：「引」的部首是弓，本義是拉開弓，引申為拉過來、「取、拿起」。觴是酒杯，「引觴」就是「拿起酒杯」。" }
     ];
 
     // 2. 系統變數與存儲
@@ -161,11 +177,10 @@
     let startTime = 0;
     let timerInterval;
     let shuffledQuestions = [];
-    let currentWrongWords = []; // 紀錄單次測驗的錯字
+    let currentWrongWords = []; 
 
     // 3. 介面更新與邏輯
     function initMenu() {
-        // 更新過往成績
         const recordsDiv = document.getElementById('past-records');
         if (stats.runs.length === 0) {
             recordsDiv.innerHTML = "暫無記錄";
@@ -175,7 +190,6 @@
             ).join('<hr style="margin:5px 0; border-top:1px dashed #d4c9b3;">');
         }
 
-        // 更新各詞匯正確率
         const qStatsDiv = document.getElementById('q-stats');
         qStatsDiv.innerHTML = stats.qStats.map((s, idx) => {
             let keyword = questions[idx].keyword;
@@ -217,6 +231,10 @@
     }
 
     function loadQuestion() {
+        // 隱藏提示與按鈕
+        document.getElementById('hint-container').classList.add('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
+        
         const qData = shuffledQuestions[currentQIndex];
         document.getElementById('progress').innerText = `進度: ${currentQIndex + 1} / 15`;
         document.getElementById('question-text').innerText = qData.q;
@@ -248,27 +266,31 @@
             clickedBtn.classList.add('wrong');
             buttons[qData.ans].classList.add('correct');
             
-            // 紀錄錯字
             if (!currentWrongWords.includes(qData.keyword)) {
                 currentWrongWords.push(qData.keyword);
             }
         }
 
-        setTimeout(() => {
-            currentQIndex++;
-            if (currentQIndex >= 15) {
-                endQuiz();
-            } else {
-                loadQuestion();
-            }
-        }, 1000);
+        // 顯示提示與下一題按鈕
+        const hintBox = document.getElementById('hint-container');
+        hintBox.innerText = qData.hint;
+        hintBox.classList.remove('hidden');
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        if (currentQIndex >= 15) {
+            endQuiz();
+        } else {
+            loadQuestion();
+        }
     }
 
     function endQuiz() {
         clearInterval(timerInterval);
         const timeTaken = Math.floor((Date.now() - startTime) / 1000);
         
-        // 本地儲存
         const runData = {
             date: new Date().toLocaleString('zh-HK'),
             score: score,
@@ -277,7 +299,6 @@
         stats.runs.push(runData);
         localStorage.setItem('dseMcStats_v2', JSON.stringify(stats));
 
-        // 顯示結果畫面
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
         document.getElementById('final-score').innerText = `得分: ${score} / 15`;
@@ -287,7 +308,6 @@
         statusEl.innerText = "成績上傳中...";
         statusEl.className = "upload-status text-green";
 
-        // 準備上傳到 Google Sheet
         let wrongWordsStr = currentWrongWords.length > 0 ? currentWrongWords.join('、') : "全對";
         const scriptUrl = "https://script.google.com/macros/s/AKfycbxC--N5j5vV7cSegyo_NWmiBB4TA6Ip9pEaaejLDaTpaedgf_kgIPHWUzm-B_VqzGVD/exec";
         const fetchUrl = `${scriptUrl}?score=${score}&wrongWords=${encodeURIComponent(wrongWordsStr)}`;
