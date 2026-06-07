@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSE 文言文選擇題練習</title>
+    <style>
+        /* 文學風配色與字體 */
+        body {
+            font-family: "Kaiti TC", "Kaiti SC", "TW-Sung", "PMingLiU", "MingLiU", serif;
+            background-color: #f0ebe1; /* 宣紙底色 */
+            color: #3a3632; /* 墨黑色 */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: #faf8f4;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 4px;
+            border: 1px solid #d4c9b3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        .hidden { display: none !important; }
+        h1, h2, h3 { 
+            text-align: center; 
+            color: #4a3b32; 
+            font-weight: normal;
+            border-bottom: 1px dashed #d4c9b3;
+            padding-bottom: 10px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border: 1px solid #d4c9b3;
+            border-radius: 4px;
+            background: #f0ebe1;
+            color: #3a3632;
+            font-size: 18px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover:not(:disabled) { background: #e3dccf; }
+        
+        /* 主按鈕：深赭色 */
+        .btn-primary { background: #7a4b3a; color: #fcfbf9; border: none; font-size: 20px; }
+        .btn-primary:hover:not(:disabled) { background: #5c3628; }
+        
+        /* 答題狀態顏色：雅致的綠與紅 */
+        .correct { background: #5c7a53 !important; color: white !important; border-color: #5c7a53 !important; }
+        .wrong { background: #9e4747 !important; color: white !important; border-color: #9e4747 !important; }
+        
+        /* 統計顏色 */
+        .text-green { color: #5c7a53; }
+        .text-red { color: #9e4747; }
+
+        .stats-box {
+            background: #f0ebe1;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #d4c9b3;
+            margin-bottom: 20px;
+            font-size: 16px;
+            max-height: 250px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d4c9b3;
+        }
+        .question-text { 
+            font-size: 22px; 
+            margin-bottom: 25px; 
+            white-space: pre-line; 
+            line-height: 1.6; 
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 主選單 -->
+    <div id="menu-screen">
+        <h1>文言文詞匯測驗</h1>
+        <button class="btn-primary" onclick="startQuiz()">開始測驗</button>
+        
+        <h3>過往成績 (最近5次)</h3>
+        <div class="stats-box" id="past-records">暫無記錄</div>
+        
+        <h3>各詞匯正確率</h3>
+        <div class="stats-box" id="q-stats">暫無記錄</div>
+    </div>
+
+    <!-- 測驗介面 -->
+    <div id="quiz-screen" class="hidden">
+        <div class="header-info">
+            <span id="progress">進度: 1/15</span>
+            <span id="timer">時間: 0s</span>
+        </div>
+        <div class="question-text" id="question-text">題目載入中...</div>
+        <div id="options-container"></div>
+    </div>
+
+    <!-- 結果介面 -->
+    <div id="result-screen" class="hidden">
+        <h1>測驗完成</h1>
+        <h2 id="final-score">得分: 0 / 15</h2>
+        <h3 id="final-time" style="border:none;">用時: 0 秒</h3>
+        <button class="btn-primary" onclick="startQuiz()">再來一次</button>
+        <button onclick="showMenu()">返回主選單</button>
+    </div>
+</div>
+
+<script>
+    // 1. 題目資料 (加入 keyword 屬性)
+    const questions = [
+        { q: "1）使人遺趙王書\n「遺」的意思是？", keyword: "遺", options: ["遺留 / 留下", "遺失 / 丟失", "派遣", "送給"], ans: 3 },
+        { q: "2）均之二策，寧許以負秦曲\n「均」的意思是？", keyword: "均", options: ["平均 / 平分", "全部 / 皆", "衡量", "相同"], ans: 2 },
+        { q: "3）相如奉璧奏秦王\n「奏」的意思是？", keyword: "奏", options: ["彈奏", "稟告 / 上奏", "獻上", "敲擊"], ans: 2 },
+        { q: "4）秦王飲酒酣\n「酣」的意思是？", keyword: "酣", options: ["喝醉", "盡興", "痛飲", "睡覺"], ans: 1 },
+        { q: "5）寶馬雕車香滿路\n「寶馬」的意思是？", keyword: "寶馬", options: ["滿載寶物的馬車", "裝飾華麗的馬", "名貴的駿馬", "跑得快的馬"], ans: 2 },
+        { q: "6）驀然回首\n「驀然」的意思是？", keyword: "驀然", options: ["傍晚時分", "突然 / 忽然", "傷心地", "不經意地"], ans: 3 },
+        { q: "7）吾為其無用而掊之\n「掊」的意思是？", keyword: "掊", options: ["掩埋", "拋棄", "剖開", "擊破"], ans: 3 },
+        { q: "8）其堅不能自舉也\n「舉」的意思是？", keyword: "舉", options: ["舉起", "承受", "飛起", "支撐"], ans: 1 },
+        { q: "9）今一朝而鬻百金\n「鬻」的意思是？", keyword: "鬻", options: ["賺取", "買入", "出售", "獲得"], ans: 2 },
+        { q: "10）以候敖者\n「敖」的意思是？", keyword: "敖", options: ["驕傲的人", "熬夜的人", "諸侯", "出遊"], ans: 3 },
+        { q: "11）其隙也，則施施而行\n「隙」的意思是？", keyword: "隙", options: ["縫隙", "裂痕", "空間", "空閒時間"], ans: 3 },
+        { q: "12）緣染溪\n「緣」的意思是？", keyword: "緣", options: ["緣分", "攀緣", "因為", "沿著"], ans: 3 },
+        { q: "13）到則披草而坐\n「披」的意思是？", keyword: "披", options: ["披上 / 穿上", "劈開", "鋪開", "撥開"], ans: 3 },
+        { q: "14）悠悠乎與顥氣俱\n「悠悠」的意思是？", keyword: "悠悠", options: ["悠閒自在", "歷史悠久", "慢慢地", "遼闊無窮"], ans: 3 },
+        { q: "15）引觴滿酌\n「引」的意思是？", keyword: "引", options: ["吸引", "帶領", "飲用", "拿起"], ans: 3 }
+    ];
+
+    // 2. 系統變數與存儲
+    let stats = JSON.parse(localStorage.getItem('dseMcStats_v2')) || {
+        runs: [],
+        qStats: Array(15).fill(null).map(() => ({ correct: 0, wrong: 0 }))
+    };
+
+    let currentQIndex = 0;
+    let score = 0;
+    let startTime = 0;
+    let timerInterval;
+    let shuffledQuestions = [];
+
+    // 3. 介面更新與邏輯
+    function initMenu() {
+        // 更新過往成績
+        const recordsDiv = document.getElementById('past-records');
+        if (stats.runs.length === 0) {
+            recordsDiv.innerHTML = "暫無記錄";
+        } else {
+            recordsDiv.innerHTML = stats.runs.slice(-5).reverse().map(r => 
+                `<div>${r.date} - 得分: <b>${r.score}/15</b> (用時: ${r.time}s)</div>`
+            ).join('<hr style="margin:5px 0; border-top:1px dashed #d4c9b3;">');
+        }
+
+        // 更新各詞匯正確率 (改用字詞顯示)
+        const qStatsDiv = document.getElementById('q-stats');
+        qStatsDiv.innerHTML = stats.qStats.map((s, idx) => {
+            let keyword = questions[idx].keyword;
+            let total = s.correct + s.wrong;
+            if (total === 0) return `<div>「${keyword}」：尚未作答</div>`;
+            
+            let rate = Math.round((s.correct / total) * 100);
+            let colorClass = rate >= 80 ? 'text-green' : 'text-red';
+            return `<div class="${colorClass}">「${keyword}」：${rate}% (${s.correct}/${total})</div>`;
+        }).join('');
+    }
+
+    function showMenu() {
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('menu-screen').classList.remove('hidden');
+        initMenu();
+    }
+
+    function startQuiz() {
+        document.getElementById('menu-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        
+        shuffledQuestions = questions.map((q, i) => ({...q, origIndex: i})).sort(() => Math.random() - 0.5);
+        
+        currentQIndex = 0;
+        score = 0;
+        startTime = Date.now();
+        
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            let t = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').innerText = `時間: ${t}s`;
+        }, 1000);
+
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const qData = shuffledQuestions[currentQIndex];
+        document.getElementById('progress').innerText = `進度: ${currentQIndex + 1} / 15`;
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const optsContainer = document.getElementById('options-container');
+        optsContainer.innerHTML = '';
+        
+        qData.options.forEach((opt, idx) => {
+            let btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = () => handleAnswer(btn, idx, qData);
+            optsContainer.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(clickedBtn, selectedIdx, qData) {
+        const buttons = document.getElementById('options-container').querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+
+        const isCorrect = (selectedIdx === qData.ans);
+        const origIdx = qData.origIndex;
+
+        if (isCorrect) {
+            score++;
+            stats.qStats[origIdx].correct++;
+            clickedBtn.classList.add('correct');
+        } else {
+            stats.qStats[origIdx].wrong++;
+            clickedBtn.classList.add('wrong');
+            buttons[qData.ans].classList.add('correct');
+        }
+
+        setTimeout(() => {
+            currentQIndex++;
+            if (currentQIndex >= 15) {
+                endQuiz();
+            } else {
+                loadQuestion();
+            }
+        }, 1000);
+    }
+
+    function endQuiz() {
+        clearInterval(timerInterval);
+        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        
+        const runData = {
+            date: new Date().toLocaleString('zh-HK'),
+            score: score,
+            time: timeTaken
+        };
+        stats.runs.push(runData);
+        localStorage.setItem('dseMcStats_v2', JSON.stringify(stats));
+
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = `得分: ${score} / 15`;
+        document.getElementById('final-time').innerText = `用時: ${timeTaken} 秒`;
+    }
+
+    initMenu();
+</script>
+
+</body>
+</html>
