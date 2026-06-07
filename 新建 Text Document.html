@@ -87,6 +87,11 @@
             line-height: 1.6; 
             text-align: center;
         }
+        .upload-status {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -119,6 +124,7 @@
         <h1>測驗完成</h1>
         <h2 id="final-score">得分: 0 / 15</h2>
         <h3 id="final-time" style="border:none;">用時: 0 秒</h3>
+        <p id="upload-status" class="upload-status text-green">成績上傳中...</p>
         <button class="btn-primary" onclick="startQuiz()">再來一次</button>
         <button onclick="showMenu()">返回主選單</button>
     </div>
@@ -155,6 +161,7 @@
     let startTime = 0;
     let timerInterval;
     let shuffledQuestions = [];
+    let currentWrongWords = []; // 紀錄單次測驗的錯字
 
     // 3. 介面更新與邏輯
     function initMenu() {
@@ -168,7 +175,7 @@
             ).join('<hr style="margin:5px 0; border-top:1px dashed #d4c9b3;">');
         }
 
-        // 更新各詞匯正確率 (改用字詞顯示)
+        // 更新各詞匯正確率
         const qStatsDiv = document.getElementById('q-stats');
         qStatsDiv.innerHTML = stats.qStats.map((s, idx) => {
             let keyword = questions[idx].keyword;
@@ -197,6 +204,7 @@
         
         currentQIndex = 0;
         score = 0;
+        currentWrongWords = [];
         startTime = Date.now();
         
         clearInterval(timerInterval);
@@ -239,6 +247,11 @@
             stats.qStats[origIdx].wrong++;
             clickedBtn.classList.add('wrong');
             buttons[qData.ans].classList.add('correct');
+            
+            // 紀錄錯字
+            if (!currentWrongWords.includes(qData.keyword)) {
+                currentWrongWords.push(qData.keyword);
+            }
         }
 
         setTimeout(() => {
@@ -255,6 +268,7 @@
         clearInterval(timerInterval);
         const timeTaken = Math.floor((Date.now() - startTime) / 1000);
         
+        // 本地儲存
         const runData = {
             date: new Date().toLocaleString('zh-HK'),
             score: score,
@@ -263,10 +277,30 @@
         stats.runs.push(runData);
         localStorage.setItem('dseMcStats_v2', JSON.stringify(stats));
 
+        // 顯示結果畫面
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
         document.getElementById('final-score').innerText = `得分: ${score} / 15`;
         document.getElementById('final-time').innerText = `用時: ${timeTaken} 秒`;
+        
+        const statusEl = document.getElementById('upload-status');
+        statusEl.innerText = "成績上傳中...";
+        statusEl.className = "upload-status text-green";
+
+        // 準備上傳到 Google Sheet
+        let wrongWordsStr = currentWrongWords.length > 0 ? currentWrongWords.join('、') : "全對";
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbxC--N5j5vV7cSegyo_NWmiBB4TA6Ip9pEaaejLDaTpaedgf_kgIPHWUzm-B_VqzGVD/exec";
+        const fetchUrl = `${scriptUrl}?score=${score}&wrongWords=${encodeURIComponent(wrongWordsStr)}`;
+        
+        fetch(fetchUrl, { mode: 'no-cors' })
+            .then(() => {
+                statusEl.innerText = "✓ 成績已成功上傳至紀錄表";
+            })
+            .catch(err => {
+                console.error("上傳失敗", err);
+                statusEl.innerText = "✗ 上傳紀錄失敗，請檢查網絡";
+                statusEl.className = "upload-status text-red";
+            });
     }
 
     initMenu();
