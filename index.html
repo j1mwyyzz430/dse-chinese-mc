@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSE 文言文選擇題練習</title>
+    <title>DSE 地理科選擇題溫習</title>
     <style>
-        /* 文學風配色與字體 */
+        /* 地理自然風配色與字體 */
         body {
             font-family: "Kaiti TC", "Kaiti SC", "TW-Sung", "PMingLiU", "MingLiU", serif;
-            background-color: #f0ebe1;
-            color: #3a3632;
+            background-color: #eef3eb;
+            color: #2c3e2e;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
         }
         .container {
-            background: #faf8f4;
+            background: #f8fbf7;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             border-radius: 4px;
-            border: 1px solid #d4c9b3;
+            border: 1px solid #c5d4c1;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             padding: 25px;
             box-sizing: border-box;
@@ -28,9 +28,9 @@
         .hidden { display: none !important; }
         h1, h2, h3 { 
             text-align: center; 
-            color: #4a3b32; 
+            color: #3b523d; 
             font-weight: normal;
-            border-bottom: 1px dashed #d4c9b3;
+            border-bottom: 1px dashed #c5d4c1;
             padding-bottom: 10px;
         }
         
@@ -38,20 +38,20 @@
             width: 100%;
             padding: 14px;
             margin: 8px 0;
-            border: 1px solid #d4c9b3;
+            border: 1px solid #c5d4c1;
             border-radius: 4px;
-            background: #f0ebe1;
-            color: #3a3632;
+            background: #eef3eb;
+            color: #2c3e2e;
             font-size: 18px;
             font-family: inherit;
             cursor: pointer;
             transition: 0.2s;
         }
-        button:hover:not(:disabled) { background: #e3dccf; }
+        button:hover:not(:disabled) { background: #dce5d8; }
         
-        /* 主按鈕：深赭色 */
-        .btn-primary { background: #7a4b3a; color: #fcfbf9; border: none; font-size: 20px; }
-        .btn-primary:hover:not(:disabled) { background: #5c3628; }
+        /* 主按鈕：深綠色 */
+        .btn-primary { background: #4a6b4d; color: #fcfbf9; border: none; font-size: 20px; }
+        .btn-primary:hover:not(:disabled) { background: #365239; }
         
         /* 答題狀態顏色 */
         .correct { background: #5c7a53 !important; color: white !important; border-color: #5c7a53 !important; }
@@ -62,30 +62,61 @@
         .text-red { color: #9e4747; }
 
         .stats-box {
-            background: #f0ebe1;
+            background: #eef3eb;
             padding: 15px;
             border-radius: 4px;
-            border: 1px solid #d4c9b3;
+            border: 1px solid #c5d4c1;
             margin-bottom: 20px;
             font-size: 16px;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
             line-height: 1.8;
         }
+        
+        /* 手風琴分類統計樣式 */
+        .topic-btn {
+            background: #dce5d8;
+            font-weight: bold;
+            text-align: left;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border: 1px solid #c5d4c1;
+            display: flex;
+            justify-content: space-between;
+        }
+        .topic-content {
+            background: #fdf8e4;
+            border: 1px solid #d4c9b3;
+            border-top: none;
+            padding: 15px;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            border-radius: 0 0 4px 4px;
+            font-size: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .stat-item {
+            border-bottom: 1px dashed #d4c9b3;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .stat-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
         .header-info {
             display: flex;
             justify-content: space-between;
             font-size: 18px;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #d4c9b3;
+            border-bottom: 1px solid #c5d4c1;
         }
         .question-text { 
-            font-size: 22px; 
+            font-size: 20px; 
             margin-bottom: 25px; 
             white-space: pre-line; 
             line-height: 1.6; 
-            text-align: center;
+            text-align: left;
         }
         .upload-status {
             text-align: center;
@@ -93,7 +124,6 @@
             margin-bottom: 15px;
         }
         
-        /* 小提示框樣式 */
         .hint-box {
             background: #fdf8e4;
             border-left: 4px solid #d4c9b3;
@@ -111,26 +141,28 @@
 <div class="container">
     <!-- 主選單 -->
     <div id="menu-screen">
-        <h1>文言文詞匯測驗</h1>
+        <h1>DSE 地理科 MC 測驗</h1>
+        <p style="text-align:center; color:#5c7a53; font-size:15px;">每次隨機抽 20 題（重點考核 C6 及 C7）</p>
         <button class="btn-primary" onclick="startQuiz()">開始測驗</button>
         
         <h3>過往成績 (最近5次)</h3>
         <div class="stats-box" id="past-records">暫無記錄</div>
         
-        <h3>各詞匯正確率</h3>
-        <div class="stats-box" id="q-stats">暫無記錄</div>
+        <h3>各課題題目與正確率</h3>
+        <div id="topics-container">
+            <!-- 動態生成課題手風琴 -->
+        </div>
     </div>
 
     <!-- 測驗介面 -->
     <div id="quiz-screen" class="hidden">
         <div class="header-info">
-            <span id="progress">進度: 1/15</span>
+            <span id="progress">進度: 1/20</span>
             <span id="timer">時間: 0s</span>
         </div>
         <div class="question-text" id="question-text">題目載入中...</div>
         <div id="options-container"></div>
         
-        <!-- 提示與下一題 -->
         <div id="hint-container" class="hint-box hidden"></div>
         <button id="next-btn" class="btn-primary hidden" style="margin-top: 15px;" onclick="nextQuestion()">下一題</button>
     </div>
@@ -138,7 +170,7 @@
     <!-- 結果介面 -->
     <div id="result-screen" class="hidden">
         <h1>測驗完成</h1>
-        <h2 id="final-score">得分: 0 / 15</h2>
+        <h2 id="final-score">得分: 0 / 20</h2>
         <h3 id="final-time" style="border:none;">用時: 0 秒</h3>
         <p id="upload-status" class="upload-status text-green">成績上傳中...</p>
         <button class="btn-primary" onclick="startQuiz()">再來一次</button>
@@ -147,29 +179,114 @@
 </div>
 
 <script>
-    // 1. 題目資料 (更新了選項與加入 hint)
+    // 1. 題目資料 (新增 C6 及 C7 題目，並加入 topic 屬性)
     const questions = [
-        { q: "1）使人遺趙王書\n「遺」的意思是？", keyword: "遺", options: ["遺留 / 留下", "遺失 / 丟失", "派遣", "給予、送"], ans: 3, hint: "💡 小提示：「遺」讀作 wai6（魏）時是留下，但讀作 wai2（偉）時，古義是「給予、送」。可以聯想詞語「餽贈」（餽遺），就是送給別人的意思。" },
-        { q: "2）均之二策，寧許以負秦曲\n「均」的意思是？", keyword: "均", options: ["平均 / 平分", "全部 / 皆", "衡量", "相同"], ans: 2, hint: "💡 小提示：「均」在這裡不是平均，而是放在天平上「衡量」輕重。想像藺相如把兩個計策（二策）放在天平的兩邊「衡量」優劣。" },
-        { q: "3）相如奉璧奏秦王\n「奏」的意思是？", keyword: "奏", options: ["彈奏", "稟告 / 上奏", "獻上", "敲擊"], ans: 2, hint: "💡 小提示：「奏」現代多指彈奏樂器或上奏摺，但在這裡有「進獻、獻上」之意。想像相如雙手捧著玉璧，恭敬地「呈獻」給君王。" },
-        { q: "4）秦王飲酒酣\n「酣」的意思是？", keyword: "酣", options: ["喝醉", "飲酒到高興的時候", "痛飲", "睡覺"], ans: 1, hint: "💡 小提示：「酣」字從「酉」部（與酒有關），根據注釋，這裡確切的意思是「飲酒到高興的時候」，還沒到爛醉的程度。" },
-        { q: "5）寶馬雕車香滿路\n「寶馬」的意思是？", keyword: "寶馬", options: ["滿載寶物的馬車", "裝飾華麗的馬", "名貴的駿馬", "跑得快的馬"], ans: 2, hint: "💡 小提示：「寶」指珍貴、名貴，「馬」就是駿馬。古人眼中的「寶馬」就是「名貴的駿馬」。" },
-        { q: "6）驀然迴首\n「驀然」的意思是？", keyword: "驀然", options: ["傍晚時分", "突然、忽然", "傷心地", "不經意地"], ans: 1, hint: "💡 小提示：根據注釋，「驀然」確切的意思是「突然、忽然」。千萬別寫錯成日字底的「暮」（傍晚）。聯想：走著走著，「突然」回頭一看。" },
-        { q: "7）吾為其無用而掊之\n「掊」的意思是？", keyword: "掊", options: ["掩埋", "拋棄", "剖開", "擊破"], ans: 3, hint: "💡 小提示：「掊」（讀音：剖）部首是手，意思是雙手把東西「擊破」。莊子覺得大葫蘆沒用，就動手把它「擊破」了。" },
-        { q: "8）其堅不能自舉也\n「舉」的意思是？", keyword: "舉", options: ["舉起", "承受", "飛起", "擎、拿起"], ans: 3, hint: "💡 小提示：根據注釋，「舉」是「擎、拿起」的意思。指大葫蘆的質地不夠堅硬，裝滿水後，無法把它「拿起」。" },
-        { q: "9）今一朝而鬻技百金\n「鬻」的意思是？", keyword: "鬻", options: ["賺取", "買入", "賣", "獲得"], ans: 2, hint: "💡 小提示：「鬻」（讀音：育）字下面是「鬲」（古代煮食器具），上面像粥。古人煮粥拿去賣，引申為「賣」。聯想成語「賣兒鬻女」。" },
-        { q: "10）以候敖者\n「敖」的意思是？", keyword: "敖", options: ["驕傲的人", "熬夜的人", "諸侯", "出遊、閒遊"], ans: 3, hint: "💡 小提示：「敖」是「遨」的本字，通「遨」。加上辵部（辶）就是「遨遊」，所以「敖者」就是「出遊、閒遊」的人。" },
-        { q: "11）其隙也，則施施而行，漫漫而遊。\n「隙」的意思是？", keyword: "隙", options: ["縫隙", "裂痕", "空間", "空隙，指閒暇的時間"], ans: 3, hint: "💡 小提示：課文中的「隙」不是指物理上的空間，而是指時間上的空檔，即「空隙，指閒暇的時間」。" },
-        { q: "12）緣染溪\n「緣」的意思是？", keyword: "緣", options: ["緣分", "攀緣", "因為", "沿著、順著"], ans: 3, hint: "💡 小提示：「緣」在這裡讀作 jyun4，和「沿」讀音相近，意思也是「沿著、順著」。聯想「沿（緣）著溪水走」。" },
-        { q: "13）到則披草而坐\n「披」的意思是？", keyword: "披", options: ["披上 / 穿上", "劈開", "鋪開", "用手撥開"], ans: 3, hint: "💡 小提示：「披」平時解作披上衣服，但這裡是手部動作，指「用手撥開」雜草。聯想成語「披荊斬棘」，就是撥開荊棘。" },
-        { q: "14）悠悠乎與顥氣俱\n「悠悠」的意思是？", keyword: "悠悠", options: ["悠閒自在", "歷史悠久", "慢慢地", "遼闊無窮"], ans: 3, hint: "💡 小提示：「悠悠」在現代多指悠閒，但在這裡形容西山的氣象，意思是「飄渺無窮 / 遼闊無窮」。" },
-        { q: "15）引觴滿酌\n「引」的意思是？", keyword: "引", options: ["吸引", "帶領 / 引導", "飲用", "取、拿起"], ans: 3, hint: "💡 小提示：「引」的部首是弓，本義是拉開弓，引申為拉過來、「取、拿起」。觴是酒杯，「引觴」就是「拿起酒杯」。" }
+        { topic: "C6", q: "[C6 熱帶雨林]\n1. 熱帶雨林氣候的年溫差通常為多少？", keyword: "Q1", options: ["1-2℃", "5-10℃", "10-15℃", "20℃以上"], ans: 0, hint: "💡 小提示：熱帶雨林接近赤道，全年受太陽直射，氣溫極穩定。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n2. 下列哪項是熱帶雨林土壤貧瘠的主要原因？\n(1) 強烈的淋溶作用\n(2) 龐大生物量迅速吸收養分\n(3) 缺乏枯枝落葉", keyword: "Q2", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：雨林其實有大量枯枝落葉，但分解極快，養分迅速被植物吸收或被雨水沖走（淋溶）。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n3. 熱帶雨林土壤呈紅色的原因是？", keyword: "Q3", options: ["腐殖質含量高", "鐵和鋁的氧化物積聚", "火山灰沉積", "缺乏水分"], ans: 1, hint: "💡 小提示：強烈淋溶作用沖走可溶性礦物，留下不溶的鐵和鋁氧化物（磚紅壤）。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n4. 關於雨林植被特徵，下列哪項不正確？", keyword: "Q4", options: ["樹皮平滑而薄", "具有滴水葉尖", "根部深長以吸取地下水", "具有板根支撐"], ans: 2, hint: "💡 小提示：雨林水分充足且養分集中在表土，植物多為淺根系，不需要深根吸水。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n5. 熱帶雨林分層結構中，哪一層的光度最低、相對濕度最高？", keyword: "Q5", options: ["露生層", "冠層", "幼樹層", "地被層"], ans: 3, hint: "💡 小提示：地被層位於最底層，陽光被重重樹冠遮擋，水分難以蒸發。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n6. 在熱帶雨林養分循環中，哪一個儲存庫的養分量最大？", keyword: "Q6", options: ["生物量", "枯枝落葉", "土壤", "大氣圈"], ans: 0, hint: "💡 小提示：雨林絕大部分養分都儲存在活生生的植物和動物（生物量）體內。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n7. 傳統遷移耕作中「刀耕火種」的主要作用是？", keyword: "Q7", options: ["驅趕野獸", "釋放生物量中的養分至土壤", "減少溫室氣體", "增加土壤水分"], ans: 1, hint: "💡 小提示：燃燒植物可以將生物量中的養分轉化為灰燼，短暫提升土壤肥力。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n8. 亞馬遜雨林被大規模濫伐的最核心人為活動是？", keyword: "Q8", options: ["種植油棕櫚", "牧牛業", "開採金礦", "興建水壩"], ans: 1, hint: "💡 小提示：在南美洲亞馬遜地區，清理林地作商業牧牛是最主要的伐林原因。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n9. 濫伐林木對當地微氣候的影響包括：\n(1) 日溫差增加\n(2) 相對濕度下降\n(3) 風速減弱", keyword: "Q9", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：失去樹冠遮蔽，日間更熱夜間更冷（溫差增）；失去樹木阻擋，風速會「增加」而非減弱。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n10. 伐林後，水文圈會出現甚麼變化？", keyword: "Q10", options: ["截留增加", "下滲增加", "地表徑流增加", "蒸騰作用增加"], ans: 2, hint: "💡 小提示：沒有樹葉截留和樹根抓緊泥土，雨水直接落到地面，地表徑流大增。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n11. 伐林對養分循環的影響是？", keyword: "Q11", options: ["枯枝落葉層養分增加", "淋溶作用減弱", "生物量養分流失", "土壤肥力永久提升"], ans: 2, hint: "💡 小提示：樹木被砍伐並運走，意味著最大的養分庫（生物量）被直接移除了。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n12. 發展生態旅遊作為保育雨林措施的局限是？", keyword: "Q12", options: ["減少土著就業", "基礎設施建設可能破壞環境", "降低國家收入", "增加非法伐木"], ans: 1, hint: "💡 小提示：建酒店、開路等配套設施本身就會對脆弱的雨林生態造成干擾。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n13. 「選擇性伐木」的缺點包括：\n(1) 營運成本高昂\n(2) 砍伐大樹時會連帶拉倒周邊植被\n(3) 需開闢道路，引來非法伐木者", keyword: "Q13", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 3, hint: "💡 小提示：這三項都是選擇性伐木在實際操作上遇到的典型困難。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n14. 認養雨林計劃的主要限制是？", keyword: "Q14", options: ["認養面積通常細小且零碎", "增加政府財政負擔", "導致雨林面積減少", "違反國際法"], ans: 0, hint: "💡 小提示：這類計劃通常由非政府組織推動，資金有限，難以保護大片連續的林地。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n15. 絞殺植物與附生植物的最大分別是？", keyword: "Q15", options: ["絞殺植物生長在地面", "絞殺植物對寄主樹有害", "附生植物不需要陽光", "附生植物吸收寄主養分"], ans: 1, hint: "💡 小提示：附生植物（如蘭花）只借位生長；絞殺植物（如無花果）最終會勒死寄主樹。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n16. 亞馬遜盆地佔全球熱帶雨林面積的多少？", keyword: "Q101", options: ["25%", "30%", "45%", "60%"], ans: 2, hint: "💡 小提示：南美洲亞馬遜盆地是全球最大的熱帶雨林，佔比達 45%。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n17. 熱帶雨林土壤剖面厚達 30 至 50 米的主要原因是？", keyword: "Q102", options: ["強烈的物理風化", "活躍的化學風化", "大量火山灰沉積", "冰川侵蝕"], ans: 1, hint: "💡 小提示：氣候炎熱潮濕，使基岩出現活躍的化學風化，形成深厚的幼細黏土層。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n18. 關於熱帶雨林的微氣候，隨植物高度下降，哪一項數值會增加？", keyword: "Q103", options: ["光度", "溫度", "相對濕度", "風速"], ans: 2, hint: "💡 小提示：冠層以下溫度較低，且冠層鎖住大量來自蒸騰作用的水汽，故相對濕度增加。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n19. 能量流失的「十分一理論」是指？", keyword: "Q104", options: ["只有十分之一的陽光能到達地面", "每一食性層次只有十分之一能量轉移到下一層", "只有十分之一的降雨被截留", "只有十分之一的養分留在土壤"], ans: 1, hint: "💡 小提示：生物在呼吸、排泄及生長時會消耗大量能量，僅 10% 能傳遞給捕食者。" },
+        { topic: "C6", q: "[C6 熱帶雨林]\n20. 濫伐林木對大氣圈的影響中，為何伐林後夜間溫度會下降？", keyword: "Q105", options: ["溫室氣體總量減少", "沒有樹冠層和足夠水汽困住熱能", "地表反射率大幅增加", "風速減弱"], ans: 1, hint: "💡 小提示：失去樹冠層的遮蔽和植物蒸騰產生的雲層保溫，夜間熱能流失極快。" },
+
+        { topic: "C7", q: "[C7 氣候變化]\n21. 自然溫室效應的機制是溫室氣體吸收了：", keyword: "Q16", options: ["太陽短波輻射", "太陽長波輻射", "地表釋出的短波輻射", "地表釋出的長波輻射"], ans: 3, hint: "💡 小提示：地球吸收太陽短波後，會以「長波輻射」形式散熱，溫室氣體正是吸收這些長波輻射。" },
+        { topic: "C7", q: "[C7 氣候變化]\n22. 下列哪項人類活動會釋出大量甲烷？\n(1) 稻米種植\n(2) 堆填區廢料分解\n(3) 燃燒煤炭發電", keyword: "Q17", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：燃燒煤炭主要釋放二氧化碳；水稻田和垃圾分解的厭氧環境會產生甲烷。" },
+        { topic: "C7", q: "[C7 氣候變化]\n23. 氟氯化碳(CFCs)的主要來源是？", keyword: "Q18", options: ["汽車廢氣", "農業化肥", "冷卻劑及噴霧劑", "焚化爐"], ans: 2, hint: "💡 小提示：CFCs 過去廣泛用於冷氣機、雪櫃的製冷劑和噴髮膠等噴霧產品中。" },
+        { topic: "C7", q: "[C7 氣候變化]\n24. 全球暖化對水文圈的影響包括：", keyword: "Q19", options: ["全球降雨量平均分佈", "海水受熱膨脹導致海平面上升", "冰川面積擴大", "河流流量永久增加"], ans: 1, hint: "💡 小提示：海平面上升的兩大主因是：陸地冰川融化，以及海水受熱體積膨脹。" },
+        { topic: "C7", q: "[C7 氣候變化]\n25. 氣候變化對北極圈的正面影響（短期）包括：\n(1) 航運路線縮短\n(2) 可耕地面積擴大\n(3) 北極熊棲息地增加", keyword: "Q20", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：海冰融化開通了西北航道，氣溫上升也使高緯度地區適合耕種，但北極熊會失去浮冰棲息地。" },
+        { topic: "C7", q: "[C7 氣候變化]\n26. 永久凍土融化會帶來甚麼負面影響？", keyword: "Q21", options: ["減少溫室氣體排放", "釋放大量甲烷及潛伏病毒", "增加地表反射率", "穩固建築物地基"], ans: 1, hint: "💡 小提示：凍土中封存了大量遠古有機物，融化分解會釋放甲烷，形成惡性循環。" },
+        { topic: "C7", q: "[C7 氣候變化]\n27. 珊瑚白化的主因是？", keyword: "Q22", options: ["海水鹽度下降", "海水溫度及酸度上升", "海平面下降", "紫外線減少"], ans: 1, hint: "💡 小提示：水溫過高會令共生藻離開珊瑚；海洋吸收過多 CO2 導致酸化，阻礙珊瑚鈣化。" },
+        { topic: "C7", q: "[C7 氣候變化]\n28. 國際減排協議（如京都議定書）成效受限的原因：\n(1) 缺乏法律約束力或懲罰機制\n(2) 欠發達國家缺乏資金技術\n(3) 擔心拖慢經濟發展", keyword: "Q23", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 3, hint: "💡 小提示：國際合作常因國家利益衝突、缺乏強制執行力及經濟考量而受阻。" },
+        { topic: "C7", q: "[C7 氣候變化]\n29. 城市熱島效應中，市區溫度較高的原因不包括：", keyword: "Q24", options: ["混凝土建築吸收並釋放熱能", "缺乏植被進行蒸騰作用", "溫室氣體排放導致全球暖化", "汽車及空調排放人造廢熱"], ans: 2, hint: "💡 小提示：全球暖化是宏觀現象；熱島效應是微氣候現象，主因是城市化改變了地表性質和人為廢熱。" },
+        { topic: "C7", q: "[C7 氣候變化]\n30. 應對海平面上升的「適應措施」是？", keyword: "Q25", options: ["發展太陽能發電", "建造防洪牆及提高低窪地區高度", "大規模植林", "徵收碳稅"], ans: 1, hint: "💡 小提示：減緩(Mitigation)是減少排放；適應(Adaptation)是想辦法與已經發生的變化共存。" },
+        { topic: "C7", q: "[C7 氣候變化]\n31. 城市綠化（如天台花園）降溫的原理是？", keyword: "Q26", options: ["增加溫室氣體吸收", "透過蒸騰作用吸收潛熱", "增加地表徑流", "反射所有太陽輻射"], ans: 1, hint: "💡 小提示：植物蒸騰水分時會從周圍環境吸收熱能（潛熱），從而降低氣溫。" },
+        { topic: "C7", q: "[C7 氣候變化]\n32. 海綿城市設計中的「多孔路面」主要目的是？", keyword: "Q27", options: ["增加地表徑流", "減少雨水下滲", "降低流入河流的水量和速度", "增加城市廢熱"], ans: 2, hint: "💡 小提示：多孔路面讓雨水下滲，減少地表徑流，從而減輕排水系統壓力及防洪。" },
+        { topic: "C7", q: "[C7 氣候變化]\n33. 欠發達國家碳排放急升的原因是？\n(1) 急速工業化及依賴煤炭\n(2) 人口增長\n(3) 擁有先進減排技術", keyword: "Q28", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：欠發達國家通常缺乏先進的減排技術，且正處於高污染的工業化階段。" },
+        { topic: "C7", q: "[C7 氣候變化]\n34. 全球暖化如何影響糧食供應？", keyword: "Q29", options: ["減少害蟲活動", "增加中低緯度地區的土壤水分", "海水倒灌使農地變鹹", "延長所有地區的無霜期"], ans: 2, hint: "💡 小提示：海平面上升會導致沿海農地受海水倒灌影響，發生土壤鹽化。" },
+        { topic: "C7", q: "[C7 氣候變化]\n35. 碳排放交易機制的目的是？", keyword: "Q30", options: ["完全禁止碳排放", "提供經濟誘因鼓勵企業減排", "將污染工業轉移至落後國家", "統一全球電費"], ans: 1, hint: "💡 小提示：透過買賣碳排放配額，讓減排成本低的企業有誘因減排並獲利。" },
+        { topic: "C7", q: "[C7 氣候變化]\n36. 氣候變化對北極圈的負面影響中，冰雪反射率減少會導致？", keyword: "Q111", options: ["北冰洋水溫下降", "吸收更多熱量，加劇溫室效應", "降雨量大幅減少", "臭氧層破洞擴大"], ans: 1, hint: "💡 小提示：冰雪反射率高達 90%，融化後露出海水（反射率 50%），會吸收更多太陽熱能。" },
+        { topic: "C7", q: "[C7 氣候變化]\n37. 城市熱島效應中，市區年雨量較鄰近郊區高的原因是？", keyword: "Q112", options: ["市區缺乏水體", "市區懸浮粒子濃度高，充當凝結核", "市區風速極高", "市區建築物阻擋降雨"], ans: 1, hint: "💡 小提示：市區較熱產生上升氣流，加上大量汽車廢氣微粒作為凝結核，有利雲雨形成。" },
+        { topic: "C7", q: "[C7 氣候變化]\n38. 海綿城市設計中的「蓄洪池」作用是？", keyword: "Q113", options: ["增加地表徑流", "暫時收集洪水並緩慢釋放", "完全取代綠化帶", "減少地下水儲存"], ans: 1, hint: "💡 小提示：蓄洪池能在暴雨時暫存雨水，防止下游排水系統超載發生泛濫。" },
+        { topic: "C7", q: "[C7 氣候變化]\n39. 為什麼欠發達國家的減排成效通常較低？", keyword: "Q114", options: ["人均排放量全球最高", "依賴燃燒煤炭等化石燃料以降低生產成本", "擁有過多先進減排技術", "人口出現負增長"], ans: 1, hint: "💡 小提示：為發展經濟，欠發達國家往往選擇成本最低但污染最高的能源（如煤炭）。" },
+        { topic: "C7", q: "[C7 氣候變化]\n40. 在香港舊區推行城市綠化（如天台花園）的主要限制是？", keyword: "Q115", options: ["綠化會增加溫室氣體", "樓宇密集且空間有限，難以大規模實施", "建造成本極低", "市民強烈反對綠化"], ans: 1, hint: "💡 小提示：香港市區極度擁擠，缺乏多餘空間在現有建築中加入綠色設計。" },
+
+        { topic: "C1", q: "[C1 災害]\n41. 破壞性板塊邊界通常會形成哪種火山？", keyword: "Q31", options: ["盾狀火山", "裂隙火山", "錐狀(複合)火山", "海底火山脊"], ans: 2, hint: "💡 小提示：破壞性邊界的岩漿黏度高，爆發猛烈，容易堆積成陡峭的錐狀火山。" },
+        { topic: "C1", q: "[C1 災害]\n42. 影響地震傷亡人數的人文因素包括：\n(1) 建築物抗震能力\n(2) 預警系統的完善度\n(3) 震源深度", keyword: "Q32", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：震源深度屬於自然因素，不是人為控制的。" },
+        { topic: "C1", q: "[C1 災害]\n43. 海嘯形成的主要原因是？", keyword: "Q33", options: ["海底火山爆發或海底地震引發水體垂直位移", "強烈熱帶氣旋", "潮汐引力", "全球暖化"], ans: 0, hint: "💡 小提示：海床突然的垂直升降會推動整層海水，形成巨大的海嘯波。" },
+        { topic: "C1", q: "[C1 災害]\n44. 土地利用規劃作為防災措施的例子是？", keyword: "Q34", options: ["規定建築物使用鋼筋混凝土", "在斷層帶設立公園或非住宅區", "派發救生包", "建立地震儀"], ans: 1, hint: "💡 小提示：土地利用規劃是決定「哪裡建什麼」，避開高危險區是最直接的方法。" },
+        { topic: "C1", q: "[C1 災害]\n45. 為什麼欠發達國家的災害傷亡通常較嚴重？", keyword: "Q35", options: ["災害強度一定較大", "缺乏資金建設防災基建及預警系統", "人口密度一定較低", "位於板塊邊界正中心"], ans: 1, hint: "💡 小提示：經濟能力決定了防災準備的程度，如建築質量和救援效率。" },
+
+        { topic: "C2", q: "[C2 河流與海岸]\n46. 河流上游的主要侵蝕作用是？", keyword: "Q41", options: ["側蝕", "下蝕", "溶蝕", "磨蝕"], ans: 1, hint: "💡 小提示：上游地勢陡峭，河流能量集中向下切割（下蝕），形成 V 型谷。" },
+        { topic: "C2", q: "[C2 河流與海岸]\n47. 氾濫平原通常形成於河流的哪一個階段？", keyword: "Q42", options: ["上游", "中游", "下游", "源頭"], ans: 2, hint: "💡 小提示：下游地勢平坦，河流以沉積作用為主，氾濫時泥沙堆積形成平原。" },
+        { topic: "C2", q: "[C2 河流與海岸]\n48. 導致河流下游容易發生氾濫的自然原因是？\n(1) 地勢平坦，流速減慢\n(2) 降雨強度大\n(3) 植被覆蓋率高", keyword: "Q43", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：植被覆蓋率高能增加截留和下滲，反而會「減少」氾濫風險。" },
+        { topic: "C2", q: "[C2 河流與海岸]\n49. 哪項人類活動會加劇河流氾濫風險？", keyword: "Q44", options: ["植林", "城市化鋪設混凝土路面", "興建蓄洪池", "疏浚河道"], ans: 1, hint: "💡 小提示：不透水的混凝土阻礙雨水下滲，大幅增加地表徑流，加速雨水匯入河流。" },
+        { topic: "C2", q: "[C2 河流與海岸]\n50. 「拉直河道」這項防洪措施的原理是？", keyword: "Q45", options: ["增加河道粗糙度", "縮短水流距離，加快排洪速度", "增加河水下滲", "擴大氾濫平原面積"], ans: 1, hint: "💡 小提示：拉直曲流可以讓水流更直接、快速地排走，降低該河段的水位。" },
+
+        { topic: "C3", q: "[C3 資訊科技工業]\n51. 資訊科技(IT)工業的主要區位因素是？", keyword: "Q51", options: ["靠近廉價非技術勞工", "靠近龐大原材料產地", "靠近著名大學及科研機構", "靠近重工業區"], ans: 2, hint: "💡 小提示：IT工業高度依賴研發和高技術人才，因此常設於大學附近。" },
+        { topic: "C3", q: "[C3 資訊科技工業]\n52. IT工業被稱為「腳佚工業」(Footloose industry)的原因是？", keyword: "Q52", options: ["運輸成本佔總成本比例極高", "不受原材料和市場位置的嚴格限制", "需要大量土地", "產品極度笨重"], ans: 1, hint: "💡 小提示：IT產品輕巧且價值高，運輸成本微不足道，選址非常靈活。" },
+        { topic: "C3", q: "[C3 資訊科技工業]\n53. 美國矽谷將生產工序外判至亞洲（如中國、印度）的主因是？\n(1) 降低勞工成本\n(2) 拓展亞洲市場\n(3) 亞洲環保法例較嚴格", keyword: "Q53", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：亞洲通常環保法例較寬鬆，這也是吸引外資的原因之一，故(3)錯。" },
+        { topic: "C3", q: "[C3 資訊科技工業]\n54. 聚集經濟(Agglomeration)對IT工業的好處是？", keyword: "Q54", options: ["增加交通擠塞", "共享基礎設施、資訊及技術人才", "提高土地租金", "減少同行競爭"], ans: 1, hint: "💡 小提示：同類企業聚集能產生協同效應，方便交流技術及共用供應商。" },
+        { topic: "C3", q: "[C3 資訊科技工業]\n55. 產品生命周期中，哪個階段最需要大量研發(R&D)投入？", keyword: "Q55", options: ["創新期", "增長期", "成熟期", "衰退期"], ans: 0, hint: "💡 小提示：創新期需要投入大量資金和技術人員來開發新產品。" },
+
+        { topic: "C4", q: "[C4 可持續城市]\n56. 香港市區更新的「4R」策略不包括：", keyword: "Q61", options: ["重建 (Redevelopment)", "復修 (Rehabilitation)", "活化 (Revitalisation)", "重新安置 (Relocation)"], ans: 3, hint: "💡 小提示：4R 是 重建、復修、活化、保育(Preservation)。" },
+        { topic: "C4", q: "[C4 可持續城市]\n57. 活化(Revitalisation)的目的是？", keyword: "Q62", options: ["拆卸舊樓建新樓", "為舊建築注入新用途，保留地區特色", "修補樓宇外牆裂縫", "強制居民遷出"], ans: 1, hint: "💡 小提示：例如將舊警署改建為文化中心，保留外觀但改變用途。" },
+        { topic: "C4", q: "[C4 可持續城市]\n58. 香港舊區面臨的主要問題包括：\n(1) 樓宇老化及失修\n(2) 交通擠塞\n(3) 休憩用地不足", keyword: "Q63", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 3, hint: "💡 小提示：舊區規劃落後，缺乏現代化設施，這三個都是典型問題。" },
+        { topic: "C4", q: "[C4 可持續城市]\n59. 重建(Redevelopment)常帶來的社會負面影響是？", keyword: "Q64", options: ["改善居住環境", "破壞原有社區網絡及鄰里關係", "增加土地價值", "減少市區密度"], ans: 1, hint: "💡 小提示：原居民通常被迫遷往不同地區，多年建立的街坊情誼被拆散。" },
+        { topic: "C4", q: "[C4 可持續城市]\n60. 導致香港房屋供應緊張的自然因素是？", keyword: "Q65", options: ["人口老化", "山多平地少，可發展土地受限", "政府土地政策", "內地移民增加"], ans: 1, hint: "💡 小提示：注意題目問的是「自然因素」，地形陡峭是香港發展的最大自然限制。" },
+
+        { topic: "C5", q: "[C5 農業與飢荒]\n61. 薩赫勒(Sahel)地區的氣候特徵是？", keyword: "Q71", options: ["全年多雨", "降雨變率大，常出現長期乾旱", "溫帶海洋性氣候", "嚴寒多雪"], ans: 1, hint: "💡 小提示：薩赫勒位於撒哈拉沙漠邊緣，屬半乾旱氣候，降雨極不穩定。" },
+        { topic: "C5", q: "[C5 農業與飢荒]\n62. 導致薩赫勒地區荒漠化的自然原因是？", keyword: "Q72", options: ["過度放牧", "全球暖化導致降雨量減少及蒸發增加", "濫伐林木", "人口爆炸"], ans: 1, hint: "💡 小提示：題目問「自然原因」，氣候變化導致的長期乾旱是主因。" },
+        { topic: "C5", q: "[C5 農業與飢荒]\n63. 導致薩赫勒地區荒漠化的人為原因包括：\n(1) 過度耕種\n(2) 過度放牧\n(3) 收集薪柴", keyword: "Q73", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 3, hint: "💡 小提示：人口壓力迫使當地人過度利用土地資源，破壞了脆弱的植被。" },
+        { topic: "C5", q: "[C5 農業與飢荒]\n64. 荒漠化對當地社會的影響是？", keyword: "Q74", options: ["糧食產量增加", "爆發飢荒及產生氣候難民", "經濟急速增長", "城市化減慢"], ans: 1, hint: "💡 小提示：土地退化導致農產失收，居民被迫逃離家園尋找食物。" },
+        { topic: "C5", q: "[C5 農業與飢荒]\n65. 現代農業科技（如基因改造作物）在薩赫勒地區的應用限制是？", keyword: "Q75", options: ["增加作物抗旱能力", "農民缺乏資金購買種子及化肥", "提高產量", "縮短生長週期"], ans: 1, hint: "💡 小提示：科技雖好，但當地農民極度貧困，無法負擔高昂的成本。" },
+
+        { topic: "E1", q: "[E1 動態地球]\n66. 香港最常見的火成岩是？", keyword: "Q81", options: ["石灰岩及大理岩", "花崗岩及凝灰岩", "頁岩及板岩", "砂岩及片麻岩"], ans: 1, hint: "💡 小提示：香港地質以火成岩為主，花崗岩（侵入）和凝灰岩（噴出）佔據大部分面積。" },
+        { topic: "E1", q: "[E1 動態地球]\n67. 花崗岩的特徵是？", keyword: "Q82", options: ["含有化石", "晶體粗大，由石英、長石和雲母組成", "呈層狀結構", "遇酸會起泡"], ans: 1, hint: "💡 小提示：岩漿在地底緩慢冷卻，讓礦物有足夠時間結成粗大晶體。" },
+        { topic: "E1", q: "[E1 動態地球]\n68. 導致香港花崗岩容易發生強烈化學風化的氣候條件是？", keyword: "Q83", options: ["寒冷乾燥", "炎熱潮濕", "溫和多風", "日溫差極大"], ans: 1, hint: "💡 小提示：高溫加速化學反應，充足雨水提供反應媒介，有利化學風化。" },
+        { topic: "E1", q: "[E1 動態地球]\n69. 劣地(Badlands)地貌的形成過程主要是？", keyword: "Q84", options: ["強烈風蝕", "冰川侵蝕", "植被破壞後，暴雨引發強烈溝蝕", "海浪侵蝕"], ans: 2, hint: "💡 小提示：青山常見的劣地，多因山火破壞植被後，暴雨嚴重沖刷表土而成。" },
+        { topic: "E1", q: "[E1 動態地球]\n70. 導致山泥傾瀉的自然因素包括：\n(1) 斜坡坡度陡峭\n(2) 暴雨增加土壤孔隙水壓\n(3) 植被茂密", keyword: "Q85", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：植被茂密能抓緊泥土，是防止山泥傾瀉的因素，故(3)錯。" },
+
+        { topic: "E4", q: "[E4 珠江三角洲]\n71. 珠三角農業由種植水稻轉向種植蔬菜、花卉（基塘農業/園藝）的主因是？", keyword: "Q91", options: ["氣候變冷", "城市化導致市場需求改變及地價上升", "勞動力大幅增加", "水資源枯竭"], ans: 1, hint: "💡 小提示：城市人口增加對高價值農產品需求大，且農民需種植高利潤作物以應付高地價。" },
+        { topic: "E4", q: "[E4 珠江三角洲]\n72. 珠三角工業發展的初期（1980年代）主要依賴甚麼優勢？", keyword: "Q92", options: ["高科技人才", "廉價勞工及土地，以及政策優惠", "豐富的煤鐵資源", "完善的重工業基礎"], ans: 1, hint: "💡 小提示：改革開放初期，珠三角憑藉「前店後廠」模式及低成本吸引外資。" },
+        { topic: "E4", q: "[E4 珠江三角洲]\n73. 近年珠三角工業面臨的挑戰是？\n(1) 勞工成本上升\n(2) 土地短缺及租金上升\n(3) 環境污染嚴重", keyword: "Q93", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 3, hint: "💡 小提示：隨著經濟發展，昔日的低成本優勢已消失，並留下嚴重的環境代價。" },
+        { topic: "E4", q: "[E4 珠江三角洲]\n74. 「騰籠換鳥」政策的目的是？", keyword: "Q94", options: ["發展家禽養殖業", "淘汰低增值、高污染產業，引入高新科技及服務業", "將所有工業遷回農村", "停止所有城市發展"], ans: 1, hint: "💡 小提示：即產業升級轉型，把低端產業趕走（騰籠），換入高端產業（換鳥）。" },
+        { topic: "E4", q: "[E4 珠江三角洲]\n75. 珠三角城市化帶來的環境問題包括：", keyword: "Q95", options: ["生物多樣性增加", "農地流失、水質及空氣污染惡化", "溫室氣體排放減少", "熱島效應減弱"], ans: 1, hint: "💡 小提示：急速擴張的城市吞噬了農地，工業和汽車排放造成嚴重污染。" }
     ];
 
     // 2. 系統變數與存儲
-    let stats = JSON.parse(localStorage.getItem('dseMcStats_v2')) || {
+    let stats = JSON.parse(localStorage.getItem('dseGeogMcStatsV2')) || {
         runs: [],
-        qStats: Array(15).fill(null).map(() => ({ correct: 0, wrong: 0 }))
+        qStats: []
+    };
+    
+    // 防錯：確保 qStats 長度與題目數量一致
+    if (stats.qStats.length !== questions.length) {
+        let newQStats = Array(questions.length).fill(null).map(() => ({ correct: 0, wrong: 0 }));
+        // 複製舊數據（若有）
+        for(let i=0; i<Math.min(stats.qStats.length, questions.length); i++){
+            newQStats[i] = stats.qStats[i];
+        }
+        stats.qStats = newQStats;
+    }
+
+    const topicsList = ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "E1", "E4"];
+    const topicNames = {
+        "C1": "C1 災害", "C2": "C2 河流與海岸", "C3": "C3 資訊科技工業",
+        "C4": "C4 可持續城市", "C5": "C5 農業與飢荒", "C6": "C6 熱帶雨林",
+        "C7": "C7 氣候變化", "E1": "E1 動態地球", "E4": "E4 珠江三角洲"
     };
 
     let currentQIndex = 0;
@@ -181,25 +298,66 @@
 
     // 3. 介面更新與邏輯
     function initMenu() {
+        // 渲染過往成績
         const recordsDiv = document.getElementById('past-records');
         if (stats.runs.length === 0) {
             recordsDiv.innerHTML = "暫無記錄";
         } else {
             recordsDiv.innerHTML = stats.runs.slice(-5).reverse().map(r => 
-                `<div>${r.date} - 得分: <b>${r.score}/15</b> (用時: ${r.time}s)</div>`
-            ).join('<hr style="margin:5px 0; border-top:1px dashed #d4c9b3;">');
+                `<div>${r.date} - 得分: <b>${r.score}/20</b> (用時: ${r.time}s)</div>`
+            ).join('<hr style="margin:5px 0; border-top:1px dashed #c5d4c1;">');
         }
 
-        const qStatsDiv = document.getElementById('q-stats');
-        qStatsDiv.innerHTML = stats.qStats.map((s, idx) => {
-            let keyword = questions[idx].keyword;
-            let total = s.correct + s.wrong;
-            if (total === 0) return `<div>「${keyword}」：尚未作答</div>`;
+        // 渲染分類統計
+        const topicsContainer = document.getElementById('topics-container');
+        topicsContainer.innerHTML = '';
+        
+        topicsList.forEach(topic => {
+            // 篩選該課題的題目
+            let topicQs = questions.map((q, idx) => ({...q, origIndex: idx})).filter(q => q.topic === topic);
+            if(topicQs.length === 0) return;
+
+            // 計算該課題總體正確率
+            let topicTotalCorrect = 0;
+            let topicTotalAttempt = 0;
+            let questionsHtml = '';
+
+            topicQs.forEach(q => {
+                let s = stats.qStats[q.origIndex];
+                let total = s.correct + s.wrong;
+                topicTotalCorrect += s.correct;
+                topicTotalAttempt += total;
+                
+                let rateText = total === 0 ? "尚未作答" : `${Math.round((s.correct / total) * 100)}% (${s.correct}/${total})`;
+                let colorClass = (total > 0 && (s.correct / total) < 0.5) ? 'text-red' : 'text-green';
+                
+                questionsHtml += `
+                    <div class="stat-item">
+                        <div style="font-weight:bold; margin-bottom:4px;">Q: ${q.q.replace(/\[.*?\]\n/, '')}</div>
+                        <div style="color:#4a6b4d; margin-bottom:4px;">答: ${q.options[q.ans]}</div>
+                        <div class="${colorClass}">正確率: ${rateText}</div>
+                    </div>
+                `;
+            });
+
+            let topicRateText = topicTotalAttempt === 0 ? "0%" : `${Math.round((topicTotalCorrect / topicTotalAttempt) * 100)}%`;
+
+            // 建立手風琴按鈕與內容
+            let btn = document.createElement('button');
+            btn.className = 'topic-btn';
+            btn.innerHTML = `<span>${topicNames[topic]}</span> <span>${topicRateText} ▼</span>`;
             
-            let rate = Math.round((s.correct / total) * 100);
-            let colorClass = rate >= 80 ? 'text-green' : 'text-red';
-            return `<div class="${colorClass}">「${keyword}」：${rate}% (${s.correct}/${total})</div>`;
-        }).join('');
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'topic-content hidden';
+            contentDiv.innerHTML = questionsHtml;
+
+            btn.onclick = () => {
+                contentDiv.classList.toggle('hidden');
+            };
+
+            topicsContainer.appendChild(btn);
+            topicsContainer.appendChild(contentDiv);
+        });
     }
 
     function showMenu() {
@@ -214,7 +372,15 @@
         document.getElementById('result-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         
-        shuffledQuestions = questions.map((q, i) => ({...q, origIndex: i})).sort(() => Math.random() - 0.5);
+        // 隨機抽取 20 題邏輯：14 題來自 C6/C7，6 題來自其他
+        let c6c7 = questions.map((q, i) => ({...q, origIndex: i})).filter(q => q.topic === 'C6' || q.topic === 'C7');
+        let others = questions.map((q, i) => ({...q, origIndex: i})).filter(q => q.topic !== 'C6' && q.topic !== 'C7');
+        
+        c6c7.sort(() => Math.random() - 0.5);
+        others.sort(() => Math.random() - 0.5);
+        
+        let selected = [...c6c7.slice(0, 14), ...others.slice(0, 6)];
+        shuffledQuestions = selected.sort(() => Math.random() - 0.5);
         
         currentQIndex = 0;
         score = 0;
@@ -231,12 +397,11 @@
     }
 
     function loadQuestion() {
-        // 隱藏提示與按鈕
         document.getElementById('hint-container').classList.add('hidden');
         document.getElementById('next-btn').classList.add('hidden');
         
         const qData = shuffledQuestions[currentQIndex];
-        document.getElementById('progress').innerText = `進度: ${currentQIndex + 1} / 15`;
+        document.getElementById('progress').innerText = `進度: ${currentQIndex + 1} / 20`;
         document.getElementById('question-text').innerText = qData.q;
         
         const optsContainer = document.getElementById('options-container');
@@ -271,7 +436,6 @@
             }
         }
 
-        // 顯示提示與下一題按鈕
         const hintBox = document.getElementById('hint-container');
         hintBox.innerText = qData.hint;
         hintBox.classList.remove('hidden');
@@ -280,7 +444,7 @@
 
     function nextQuestion() {
         currentQIndex++;
-        if (currentQIndex >= 15) {
+        if (currentQIndex >= 20) {
             endQuiz();
         } else {
             loadQuestion();
@@ -297,11 +461,11 @@
             time: timeTaken
         };
         stats.runs.push(runData);
-        localStorage.setItem('dseMcStats_v2', JSON.stringify(stats));
+        localStorage.setItem('dseGeogMcStatsV2', JSON.stringify(stats));
 
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `得分: ${score} / 15`;
+        document.getElementById('final-score').innerText = `得分: ${score} / 20`;
         document.getElementById('final-time').innerText = `用時: ${timeTaken} 秒`;
         
         const statusEl = document.getElementById('upload-status');
