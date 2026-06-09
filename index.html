@@ -179,7 +179,7 @@
 </div>
 
 <script>
-    // 1. 題目資料 (新增 C6 及 C7 題目，並加入 topic 屬性)
+    // 1. 題目資料 (包含 C6 及 C7 重點題目)
     const questions = [
         { topic: "C6", q: "[C6 熱帶雨林]\n1. 熱帶雨林氣候的年溫差通常為多少？", keyword: "Q1", options: ["1-2℃", "5-10℃", "10-15℃", "20℃以上"], ans: 0, hint: "💡 小提示：熱帶雨林接近赤道，全年受太陽直射，氣溫極穩定。" },
         { topic: "C6", q: "[C6 熱帶雨林]\n2. 下列哪項是熱帶雨林土壤貧瘠的主要原因？\n(1) 強烈的淋溶作用\n(2) 龐大生物量迅速吸收養分\n(3) 缺乏枯枝落葉", keyword: "Q2", options: ["只有(1)(2)", "只有(1)(3)", "只有(2)(3)", "(1)(2)(3)"], ans: 0, hint: "💡 小提示：雨林其實有大量枯枝落葉，但分解極快，養分迅速被植物吸收或被雨水沖走（淋溶）。" },
@@ -275,7 +275,6 @@
     // 防錯：確保 qStats 長度與題目數量一致
     if (stats.qStats.length !== questions.length) {
         let newQStats = Array(questions.length).fill(null).map(() => ({ correct: 0, wrong: 0 }));
-        // 複製舊數據（若有）
         for(let i=0; i<Math.min(stats.qStats.length, questions.length); i++){
             newQStats[i] = stats.qStats[i];
         }
@@ -298,7 +297,6 @@
 
     // 3. 介面更新與邏輯
     function initMenu() {
-        // 渲染過往成績
         const recordsDiv = document.getElementById('past-records');
         if (stats.runs.length === 0) {
             recordsDiv.innerHTML = "暫無記錄";
@@ -308,16 +306,13 @@
             ).join('<hr style="margin:5px 0; border-top:1px dashed #c5d4c1;">');
         }
 
-        // 渲染分類統計
         const topicsContainer = document.getElementById('topics-container');
         topicsContainer.innerHTML = '';
         
         topicsList.forEach(topic => {
-            // 篩選該課題的題目
             let topicQs = questions.map((q, idx) => ({...q, origIndex: idx})).filter(q => q.topic === topic);
             if(topicQs.length === 0) return;
 
-            // 計算該課題總體正確率
             let topicTotalCorrect = 0;
             let topicTotalAttempt = 0;
             let questionsHtml = '';
@@ -333,7 +328,7 @@
                 
                 questionsHtml += `
                     <div class="stat-item">
-                        <div style="font-weight:bold; margin-bottom:4px;">Q: ${q.q.replace(/\[.*?\]\n/, '')}</div>
+                        <div style="font-weight:bold; margin-bottom:4px;">Q: ${q.q.replace(/[.*?]\n/, '')}</div>
                         <div style="color:#4a6b4d; margin-bottom:4px;">答: ${q.options[q.ans]}</div>
                         <div class="${colorClass}">正確率: ${rateText}</div>
                     </div>
@@ -342,7 +337,6 @@
 
             let topicRateText = topicTotalAttempt === 0 ? "0%" : `${Math.round((topicTotalCorrect / topicTotalAttempt) * 100)}%`;
 
-            // 建立手風琴按鈕與內容
             let btn = document.createElement('button');
             btn.className = 'topic-btn';
             btn.innerHTML = `<span>${topicNames[topic]}</span> <span>${topicRateText} ▼</span>`;
@@ -372,7 +366,6 @@
         document.getElementById('result-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         
-        // 隨機抽取 20 題邏輯：14 題來自 C6/C7，6 題來自其他
         let c6c7 = questions.map((q, i) => ({...q, origIndex: i})).filter(q => q.topic === 'C6' || q.topic === 'C7');
         let others = questions.map((q, i) => ({...q, origIndex: i})).filter(q => q.topic !== 'C6' && q.topic !== 'C7');
         
@@ -473,7 +466,9 @@
         statusEl.className = "upload-status text-green";
 
         let wrongWordsStr = currentWrongWords.length > 0 ? currentWrongWords.join('、') : "全對";
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbxC--N5j5vV7cSegyo_NWmiBB4TA6Ip9pEaaejLDaTpaedgf_kgIPHWUzm-B_VqzGVD/exec";
+        
+        // 已更新為您最新提供的 Google Apps Script 網址
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbxzTTO1QRUMgTl9cF7bBk566dnRnl0YsGqDe4YATxqL25vIZlDrQnGR967JhRlnmYDT/exec";
         const fetchUrl = `${scriptUrl}?score=${score}&wrongWords=${encodeURIComponent(wrongWordsStr)}`;
         
         fetch(fetchUrl, { mode: 'no-cors' })
